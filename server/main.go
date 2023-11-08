@@ -428,7 +428,7 @@ func sendResetEmail(email string, link string) error {
 	msg.SetHeader("Subject", "Reset password link")
 	msg.SetBody("text/html", "Please click on the following link to reset your password: <a href=\""+link+"\">Reset Password</a>")
 
-	n := gomail.NewDialer(host, port, from, "xsmtpsib-71b62bfc06824d89dfa921e6a4ab678f145db9f112a9128427cc104e95cbd219-mWUOgPsAh0FbxqfV")
+	n := gomail.NewDialer(host, port, from, os.Getenv("BREVO_API"))
 	if err := n.DialAndSend(msg); err != nil {
 		log.Println("Error sending email:", err)
 		return err
@@ -579,5 +579,9 @@ func main() {
 		c.String(http.StatusOK, "Cache cleared!")
 	})
 
-	r.Run(":8000")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8000"
+	}
+	r.Run(":" + port)
 }
